@@ -2,59 +2,399 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mon Petit Plateau</title>
 <meta name="description" content="Scanne tes jeux de société, partage ta collection et prête tes boîtes aux amis.">
+<meta name="theme-color" content="#FFFFFF">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mon Petit Plateau">
+<meta property="og:title" content="Mon Petit Plateau : ce soir, on joue à quoi ?">
+<meta property="og:description" content="Scanne tes jeux de société, partage ta collection et prête tes boîtes aux amis.">
+<meta property="og:url" content="https://monpetitplateau.app/">
+<meta property="og:image" content="https://monpetitplateau.app/icone-512.png">
+<link rel="canonical" href="https://monpetitplateau.app/">
 <link rel="icon" href="/icone-512.png">
-  <style>
-  :root { --bg:#FFFFFF; --text:#1B1D24; --muted:#5B6270; --brand:#6A4FE0; --ink:#6A4FE0; --line:#E6E8EC; --card:#F5F6F8; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#121417; --text:#F2F3F5; --muted:#A7ADB8; --ink:#A897FF; --line:#2A2E35; --card:#1B1E23; } }
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body { margin:0; background:var(--bg); color:var(--text);
-         font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
-  header { display:flex; align-items:center; gap:12px; margin-bottom: 8px; }
-  .logo { width:40px; height:40px; border-radius:10px; display:block; }
-  .app { font-weight:800; font-size:20px; }
-  h1 { font-size: 30px; line-height:1.2; margin: 24px 0 4px; }
-  .meta { color: var(--muted); font-size: 15px; margin: 0 0 24px; }
-  h2 { font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); margin: 32px 0 8px; }
-  p { margin: 0 0 12px; }
-  ul { margin: 0 0 12px; padding-left: 22px; }
-  li { margin: 4px 0; }
-  a { color: var(--ink); }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 16px 0; }
-  ol { padding-left: 22px; }
-  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
-</style>
+<link rel="preload" href="polices/baloo-2.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  .hero { text-align:center; padding: 48px 0 16px; }
-  .hero img { width:112px; height:112px; border-radius:26px; }
-  .hero h1 { font-size: 36px; margin: 20px 0 6px; }
-  .tagline { color: var(--ink); font-weight: 700; font-size: 20px; margin: 0 0 16px; }
-  .soon { display:inline-block; margin-top: 8px; padding: 10px 18px; border-radius: 999px; background: var(--card); border:1px solid var(--line); color: var(--muted); font-size: 15px; }
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-weight: 600 800; font-display: swap; src: url('polices/baloo-2.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Nunito Sans'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('polices/nunito-sans.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Polices hébergées ici : aucun appel à Google Fonts depuis le site. */
+:root { color-scheme: light; }
+body { margin: 0; }
+img { max-width: 100%; }
+
+/* Concept : le plateau du logo est la page. Il arrive en perspective (azimut 22°, élévation 52°, comme la marque),
+   puis se met à plat au défilement ; ses 8 cases portent les 8 fonctions, le pion et le dé jouent pour de vrai. */
+:root {
+  --bg: #FFFFFF;
+  --fg: #16171F;
+  --muted: #5B5F6E;
+  --line: #E7E7EC;
+  --board: #EEF0F6;
+  --edge: #23245C;
+  --title: #23245C;
+  --violet: #6A4FE0;
+  --violet-ink: #6A4FE0;
+  --on-tile: #FFFFFF;
+  --coral: #D63D47;
+  --teal: #0F7F69;
+  --blue: #3B6BDB;
+  --mustard: #FFC94A;
+  --on-mustard: #23245C;
+  --band: #23245C;
+  --on-band: #FFFFFF;
+  --on-band-soft: #C9CBEE;
+  --display: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --body: "Nunito Sans", "Avenir Next", "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1B1916; --fg: #F5F3EF; --muted: #ACA396; --line: #36322B; --board: #28251F;
+    --title: #FFFFFF; --violet-ink: #A897FF; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1B1916; --fg: #F5F3EF; --muted: #ACA396; --line: #36322B; --board: #28251F;
+  --title: #FFFFFF; --violet-ink: #A897FF; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.55 var(--body); overflow-x: clip; }
+h1, h2, h3, p { margin: 0; }
+img { display: block; }
+a { color: var(--violet-ink); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--violet-ink); outline-offset: 3px; border-radius: 6px; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* ——— Marque ——— */
+.brand { display: flex; align-items: center; gap: 12px; font: 800 26px/1 var(--display); color: var(--title); text-decoration: none; }
+.brand img { width: 56px; height: 56px; }
+.brand span { padding-top: 3px; }
+.soon { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px;
+  background: var(--violet); color: #fff; font: 700 19px/1.1 var(--display); }
+.stores { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+/* ——— Accueil ——— */
+.stage { position: relative; }
+.pin { position: relative; }
+.topbar { display: flex; align-items: center; margin-bottom: 6px; }
+.hero-copy { display: grid; gap: 18px; justify-items: center; text-align: center; padding-block: 20px 8px; }
+h1 { font: 700 clamp(54px, 16vw, 116px)/1.04 var(--display); letter-spacing: 0; color: var(--title); }
+h1 span { display: block; }
+.lede { font-size: clamp(18px, 2.6vw, 21px); line-height: 1.45; max-width: 27em; color: var(--fg); }
+.free { color: var(--muted); font-weight: 600; font-size: 16px; }
+.hero-mark { width: min(100%, 560px); height: auto; margin: -16px auto -32px; }
+.hero-mark #pion { animation: drop .75s cubic-bezier(.3, 1.4, .5, 1) .2s backwards; }
+@keyframes drop { from { transform: translateY(-70px); opacity: 0; } }
+
+/* ——— Le plateau ——— */
+.rig { display: block; }
+.edge { display: none; }
+.top { position: relative; }
+.grid { display: grid; gap: 12px; padding-block: 8px 12px; }
+.tile { position: relative; overflow: hidden; border-radius: 22px; padding: 22px 22px 0; min-height: 268px;
+  display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; background: var(--tile); color: var(--on-tile); }
+.tile h2 { font: 800 clamp(25px, 7vw, 30px)/1.05 var(--display); letter-spacing: -.01em; text-wrap: balance; }
+.tile p { font-size: 15.5px; line-height: 1.42; margin-top: 8px; font-weight: 600; }
+.tile .txt { min-width: 0; padding-bottom: 22px; }
+.coral { --tile: var(--coral); }
+.teal { --tile: var(--teal); }
+.blue { --tile: var(--blue); }
+.mustard { --tile: var(--mustard); --on-tile: var(--on-mustard); }
+.shot { align-self: end; width: 100%; height: 232px; border-radius: 16px 16px 0 0; overflow: hidden; background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, .28); transition: transform .35s cubic-bezier(.3, 1.4, .5, 1); }
+.mustard .shot { box-shadow: 0 0 0 4px rgba(35, 36, 92, .18); }
+.shot img { width: calc(100% * var(--zoom, 1)); max-width: none; height: auto; margin-left: calc((100% - 100% * var(--zoom, 1)) / 2); transform: translateY(calc(var(--crop, 0) * -1%)); }
+.tile.here { box-shadow: inset 0 0 0 5px var(--on-tile); }
+.tile.here .shot { transform: translateY(-14px); }
+.heart { align-self: center; justify-self: center; width: min(100%, 118px); padding-bottom: 12px; color: var(--on-mustard); }
+.centre { display: none; }
+
+/* ——— Le pion ——— */
+.pawn { display: none; }
+
+/* ——— Le dé ——— */
+.die-btn { appearance: none; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; padding: 0; display: grid; justify-items: center; gap: 8px; }
+.die { width: 76px; height: 76px; border-radius: 19px; background: var(--violet); box-shadow: 0 7px 0 #4A379C;
+  display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); padding: 13px; transition: transform .12s, box-shadow .12s; }
+.die i { width: 11px; height: 11px; border-radius: 50%; background: #fff; place-self: center; opacity: 0; }
+.die-btn:hover .die { transform: translateY(-3px); box-shadow: 0 10px 0 #4A379C; }
+.die-btn:active .die { transform: translateY(5px); box-shadow: 0 2px 0 #4A379C; }
+.die.rolling { animation: tumble .52s cubic-bezier(.3, .7, .4, 1); }
+@keyframes tumble { to { transform: rotate(720deg) scale(1); } 45% { transform: rotate(360deg) scale(1.16); } }
+.die-label { font: 800 22px/1.1 var(--display); color: var(--title); }
+.status { font-size: 15px; color: var(--muted); font-weight: 600; text-align: center; min-height: 3.2em; max-width: 15em; }
+
+/* Mode épinglé : grand écran, mouvement accepté */
+.pinned .stage { height: 250vh; }
+.pinned .pin { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.pinned .hero-copy { position: absolute; z-index: 1; left: 0; top: 50%; translate: 0 -50%; padding: 0; gap: clamp(10px, 2vh, 20px); }
+.pinned h1 { font-size: clamp(48px, min(6.2vw, 10vh), 112px); }
+.pinned .hero-mark { display: none; }
+.pinned .rig { display: block; position: absolute; inset: 0; --i: 0; z-index: 2; pointer-events: none; }
+.pinned .rig .top { pointer-events: auto; }
+.pinned .edge, .pinned .top {
+  display: block; position: absolute; left: 0; top: 0; width: var(--w); height: var(--h); border-radius: 46px;
+  transform: translate(var(--x), calc(var(--y) + var(--i) * var(--step))) translate(-50%, -50%) scale(var(--s)) rotateX(var(--rx)) rotateZ(var(--rz));
+  will-change: transform;
+}
+.pinned .edge { background: var(--edge); }
+.pinned .top { background: var(--board); padding: 18px; }
+.pinned .grid { width: 100%; height: 100%; padding: 0; gap: 14px; grid-template: repeat(3, minmax(0, 1fr)) / repeat(3, minmax(0, 1fr)); }
+.pinned .tile { min-height: 0; padding: 20px 18px 0 20px; gap: 12px; grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr); }
+.pinned .tile h2 { font-size: calc(var(--h) * .036); }
+.pinned .tile p { font-size: max(14px, calc(var(--h) * .0186)); line-height: 1.36; }
+.pinned .shot { height: calc(var(--h) * .205); }
+.pinned .centre { display: grid; justify-items: center; align-content: center; gap: 10px; grid-area: 2 / 2; }
+.pinned .t1 { grid-area: 3 / 1; } .pinned .t2 { grid-area: 3 / 2; } .pinned .t3 { grid-area: 3 / 3; }
+.pinned .t4 { grid-area: 2 / 3; } .pinned .t5 { grid-area: 1 / 3; } .pinned .t6 { grid-area: 1 / 2; }
+.pinned .t7 { grid-area: 1 / 1; } .pinned .t8 { grid-area: 2 / 1; }
+.pinned .pawn { display: block; position: absolute; left: 0; top: 0; width: 72px; height: 124px; z-index: 3; transform-origin: 50% 100%; pointer-events: none; will-change: transform; }
+.anchor { position: absolute; right: 19%; top: 34%; width: 0; height: 0; }
+
+/* ——— Les écrans ——— */
+.band { background: var(--band); color: var(--on-band); padding-block: 72px 80px; }
+.band-in { max-width: 1240px; margin: 0 auto; display: grid; gap: 40px; }
+.band h2, .deal h2 { font: 700 clamp(36px, 5.4vw, 60px)/1.06 var(--display); text-wrap: balance; text-align: center; }
+.screens { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 8px; margin: 0; list-style: none; padding-left: 0; }
+.screens li { flex: 0 0 min(68vw, 270px); scroll-snap-align: start; }
+.screens figure { margin: 0; display: grid; gap: 14px; }
+.screens img { width: 100%; height: auto; border-radius: 26px; box-shadow: 0 0 0 7px #0F1036; aspect-ratio: 720 / 1616; }
+.screens figcaption { font-weight: 600; font-size: 16px; line-height: 1.35; color: var(--on-band-soft); text-align: center; text-wrap: balance; }
+@media (min-width: 1200px) { .screens { justify-content: space-between; overflow: visible; } .screens li { flex: 1 1 0; } }
+
+/* ——— Le pacte ——— */
+.deal { max-width: 800px; margin: 0 auto; padding-block: 80px; display: grid; gap: 24px; justify-items: center; text-align: center; }
+.deal h2 { color: var(--title); }
+.deal-txt { display: grid; gap: 24px; justify-items: center; max-width: 36em; }
+
+footer { border-top: 1px solid var(--line); }
+.foot { max-width: 1240px; margin: 0 auto; padding-block: 28px 40px; display: grid; gap: 14px; color: var(--muted); font-size: 15px; text-align: center; }
+.foot ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; list-style: none; padding: 0; margin: 0; }
+@media (min-width: 700px) {
+  html:not(.pinned) .rig .grid { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
-  <main>
-    <div class="hero">
-      <img src="/icone-512.png" alt="Icône de Mon Petit Plateau">
-      <h1>Mon Petit Plateau</h1>
-      <p class="tagline">Ce soir, on pioche quoi ?</p>
-      <p>Scanne tes jeux de société, partage ta collection et prête tes boîtes aux amis.</p>
-      <p class="soon">Bientôt sur Google Play</p>
+<section class="stage" id="stage">
+  <div class="pin" id="pin">
+    <div class="hero-copy gutter" id="copy">
+      <header class="topbar"><a class="brand" href="#stage" aria-label="Mon Petit Plateau"><img src="marque.svg" alt="" width="56" height="56"><span>Mon Petit Plateau</span></a></header>
+      <h1><span>Ce soir,</span> <span>on joue</span> <span>à quoi&#8239;?</span></h1>
+      <p class="lede">Scanne tes jeux de société, partage ta collection et prête tes boîtes aux amis.</p>
+      <div class="stores"><p class="soon">Bientôt sur Google Play</p><p class="soon">Bientôt sur l'App Store</p></div>
+      <p class="free">Gratuit et sans publicité.</p>
     </div>
-    <div class="card">
-      <p><strong>Ta ludothèque dans la poche.</strong> Ajoute un jeu en scannant sa boîte, retrouve d'un coup d'œil ce que tu possèdes, et choisis à quoi jouer selon le nombre de joueurs et le temps dont tu disposes.</p>
-      <p><strong>Entre amis.</strong> Consulte les collections de tes amis, empruntez-vous des boîtes, organisez vos soirées et gardez l'historique de vos parties.</p>
+
+    <img class="hero-mark" src="marque.svg" alt="" width="620" height="620">
+
+    <div class="rig gutter" id="rig">
+      <div class="edge" style="--i:7"></div><div class="edge" style="--i:6"></div><div class="edge" style="--i:5"></div><div class="edge" style="--i:4"></div><div class="edge" style="--i:3"></div><div class="edge" style="--i:2"></div><div class="edge" style="--i:1"></div>
+      <div class="top" id="top">
+        <div class="grid">
+          <article class="tile coral t1" data-name="Un scan, c'est rangé">
+            <div class="txt"><h2>Un scan, c'est rangé</h2><p>Vise le code-barres au dos de la boîte. Toute une étagère à ranger&nbsp;? Enchaîne les scans.</p></div>
+            <div class="shot" style="--crop:47;--zoom:1.25"><img src="captures/03-ajout-scan.webp" alt="La feuille d'ajout : scanner le code-barres ou chercher par nom." loading="lazy"></div><span class="anchor"></span>
+          </article>
+          <article class="tile mustard t2" data-name="Offre sans doublon">
+            <div class="txt"><h2>Offre sans doublon</h2><p>Réserve un jeu de la liste d'envies d'un ami. Il ne voit rien, la surprise reste entière.</p></div>
+            <svg class="heart" viewBox="0 0 120 110" aria-hidden="true"><path fill="currentColor" d="M60 108C20 76 2 56 2 33 2 15 16 2 33 2c11 0 21 6 27 16C66 8 76 2 87 2c17 0 31 13 31 31 0 23-18 43-58 75z"/></svg><span class="anchor"></span>
+          </article>
+          <article class="tile teal t3" data-name="Tes parties, tes stats">
+            <div class="txt"><h2>Tes parties, tes stats</h2><p>Scores, gagnant, photo de fin de partie. Et le face-à-face avec tes amis.</p></div>
+            <div class="shot" style="--crop:49;--zoom:1.35"><img src="captures/06-parties-stats.webp" alt="Le face-à-face avec trois amis, parties gagnées et perdues." loading="lazy"></div><span class="anchor"></span>
+          </article>
+          <article class="tile blue t4" data-name="Toute ta collection">
+            <div class="txt"><h2>Toute ta collection</h2><p>D'un coup d'œil. Trie, cherche, marque tes coups de cœur.</p></div>
+            <div class="shot" style="--crop:33"><img src="captures/01-collection.webp" alt="La grille des boîtes de la collection." loading="lazy"></div><span class="anchor"></span>
+          </article>
+          <article class="tile coral t5" data-name="Tu sais qui a quoi">
+            <div class="txt"><h2>Tu sais qui a quoi</h2><p>Prête une boîte, même à quelqu'un qui n'a pas l'app, et fixe une date de retour.</p></div>
+            <div class="shot" style="--crop:20;--zoom:1.5"><img src="captures/08-emprunts.webp" alt="Un jeu prêté et un jeu emprunté, avec leurs dates de retour." loading="lazy"></div><span class="anchor"></span>
+          </article>
+          <article class="tile mustard t6" data-name="Votez pour le jeu">
+            <div class="txt"><h2>Votez pour le jeu</h2><p>Crée une soirée. Chacun dit s'il vient et vote pour les boîtes qui le tentent.</p></div>
+            <div class="shot" style="--crop:0"><img src="captures/07-soiree.webp" alt="Une soirée jeux avec sa date, son lieu et le vote en cours." loading="lazy"></div><span class="anchor"></span>
+          </article>
+          <article class="tile teal t7" data-name="On joue à quoi ?">
+            <div class="txt"><h2>On joue à quoi&nbsp;?</h2><p>Dis qui est là et combien de temps vous avez. L'app pioche, chez toi ou chez tes amis.</p></div>
+            <div class="shot" style="--crop:40;--zoom:1.15"><img src="captures/04-on-joue-a-quoi.webp" alt="Une pioche de jeux : Catan est proposé pour quatre joueurs." loading="lazy"></div><span class="anchor"></span>
+          </article>
+          <article class="tile blue t8" data-name="Fouille chez tes amis">
+            <div class="txt"><h2>Fouille chez tes amis</h2><p>Ajoute-les par pseudo, lien ou QR code. Vois en un instant qui a le jeu que tu cherches.</p></div>
+            <div class="shot" style="--crop:45;--zoom:1.2"><img src="captures/05-entre-amis.webp" alt="Le fil d'activité : parties jouées et invitations des amis." loading="lazy"></div><span class="anchor"></span>
+          </article>
+          <div class="centre">
+            <button class="die-btn" id="roll" type="button">
+              <span class="die" id="die" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="die-label">Lancer le dé</span>
+            </button>
+            <p class="status" id="status" aria-live="polite">Le pion démarre sur le scan.</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <footer>
-      Mon Petit Plateau · <a href="/confidentialite/">Confidentialité</a>
-      · <a href="/suppression-de-compte/">Supprimer son compte</a>
-      · <a href="/mentions-legales/">Mentions légales</a>
-      · <a href="mailto:contact@monpetitplateau.app">contact@monpetitplateau.app</a>
-    </footer>
-  </main>
+
+    <svg class="pawn" id="pawn" viewBox="76 110 50 80" aria-hidden="true">
+      <polygon fill="#4A379D" points="121.23,172.68 120.53,176.27 118.47,179.60 115.18,182.47 110.91,184.67 105.92,186.05 100.58,186.52 95.23,186.05 90.25,184.67 85.97,182.47 82.69,179.60 80.63,176.27 79.92,172.68 80.63,169.10 82.69,165.77 85.97,162.90 90.25,160.70 95.23,159.32 100.58,158.85 105.92,159.32 110.91,160.70 115.18,162.90 118.47,165.77 120.53,169.10"/>
+      <polygon fill="#6A4FE0" points="121.23,168.54 120.53,172.12 118.47,175.46 115.18,178.32 110.91,180.52 105.92,181.90 100.58,182.38 95.23,181.90 90.25,180.52 85.97,178.32 82.69,175.46 80.63,172.12 79.92,168.54 80.63,164.96 82.69,161.62 85.97,158.76 90.25,156.56 95.23,155.17 100.58,154.70 105.92,155.17 110.91,156.56 115.18,158.76 118.47,161.62 120.53,164.96"/>
+      <polygon fill="#6A4FE0" points="117.93,168.54 115.81,164.63 113.92,160.71 112.27,156.80 110.86,152.89 109.71,148.98 108.83,145.07 108.25,141.15 108.01,137.24 93.14,137.24 92.91,141.15 92.32,145.07 91.45,148.98 90.29,152.89 88.89,156.80 87.23,160.71 85.34,164.63 83.23,168.54"/>
+      <circle cx="100.58" cy="127.85" r="15.02" fill="#6A4FE0"/><circle cx="95.57" cy="122.84" r="4.07" fill="#8F6AFF"/>
+    </svg>
+  </div>
+</section>
+
+<section class="band gutter">
+  <div class="band-in">
+    <h2>Une app faite pour la table du salon</h2>
+    <ul class="screens">
+      <li><figure><img src="captures/01-collection.webp" alt="Écran Ma collection" width="720" height="1616" loading="lazy"><figcaption>Toute ta collection, avec tes vraies boîtes.</figcaption></figure></li>
+      <li><figure><img src="captures/04-on-joue-a-quoi.webp" alt="Écran On joue à quoi ?" width="720" height="1616" loading="lazy"><figcaption>Quatre joueurs, trente jeux dans la pioche.</figcaption></figure></li>
+      <li><figure><img src="captures/07-soiree.webp" alt="Écran d'une soirée jeux" width="720" height="1616" loading="lazy"><figcaption>Une soirée, un lieu, un vote.</figcaption></figure></li>
+      <li><figure><img src="captures/08-emprunts.webp" alt="Écran Emprunts" width="720" height="1616" loading="lazy"><figcaption>Cascadia est chez Hugo jusqu'au 10 novembre.</figcaption></figure></li>
+    </ul>
+  </div>
+</section>
+
+<section class="deal gutter">
+  <h2>Pas de pub. Pas de revente de données.</h2>
+  <div class="deal-txt">
+    <p>Essaie sans créer de compte, puis garde tout en t'inscrivant. Si tu préfères rester discret, le profil privé ne montre que ta carte d'identité à ceux qui ne sont pas tes amis. Et tu peux supprimer ton compte à tout moment depuis ton profil.</p>
+    <div class="stores"><p class="soon">Bientôt sur Google Play</p><p class="soon">Bientôt sur l'App Store</p></div>
+  </div>
+</section>
+
+<footer class="gutter">
+  <div class="foot">
+    <ul>
+      <li><a href="/confidentialite/">Confidentialité</a></li>
+      <li><a href="/suppression-de-compte/">Supprimer son compte</a></li>
+      <li><a href="/mentions-legales/">Mentions légales</a></li>
+      <li><a href="mailto:contact@monpetitplateau.app">contact@monpetitplateau.app</a></li>
+    </ul>
+    <p>Les fiches de jeux viennent de BoardGameGeek. Mon Petit Plateau n'est affilié à aucun éditeur de jeux.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement, stage = document.getElementById('stage'), pin = document.getElementById('pin'),
+      rig = document.getElementById('rig'), bar = document.querySelector('.topbar'), top_ = document.getElementById('top'), copy = document.getElementById('copy'),
+      pawn = document.getElementById('pawn'), die = document.getElementById('die'), roll = document.getElementById('roll'),
+      statusEl = document.getElementById('status'), pips = die.children;
+  var tiles = [1, 2, 3, 4, 5, 6, 7, 8].map(function (n) { return document.querySelector('.t' + n); });
+  var anchors = tiles.map(function (t) { return t.querySelector('.anchor'); });
+  var mq = matchMedia('(min-width: 900px) and (min-height: 540px) and (prefers-reduced-motion: no-preference)');
+  var FACES = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+  var RZ = -22, RX = 38, here = 0, hop = null, s = 1, ticking = false, dropT = 0, dropStart = 0;
+
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function ease(t) { return t * t * (3 - 2 * t); }
+  function face(n) { for (var i = 0; i < 9; i++) pips[i].style.opacity = FACES[n].indexOf(i) > -1 ? 1 : 0; }
+
+  function draw() {
+    ticking = false;
+    if (!mq.matches) return;
+    var vw = pin.clientWidth, vh = pin.clientHeight;
+    var H = clamp(vh * .9, 680, 980), W = H * 4 / 3;
+    var s1 = Math.min(1, vh * .92 / H, vw * .94 / W);
+    var scroll = -stage.getBoundingClientRect().top, range = stage.offsetHeight - vh;
+    var e = ease(clamp((scroll / range - .04) / .84, 0, 1));
+    var rad = Math.PI / 180, sin = Math.sin(22 * rad), cos = Math.cos(22 * rad), squash = Math.cos(RX * rad);
+    var bw = W * cos + H * sin, bh = (W * sin + H * cos) * squash;
+    var cw = Math.min(vw * .35, 540), gap = vw * .02;
+    var s0 = Math.min((vw * .93 - cw - gap) / bw, vh * .86 / bh);
+    var left = (vw - cw - gap - bw * s0) / 2;
+    copy.style.left = left + 'px'; copy.style.width = cw + 'px';
+    var x0 = left + cw + gap + bw * s0 / 2, y0 = vh / 2 - 29 * s0;
+    s = lerp(s0, s1, e);
+    var st = rig.style;
+    st.setProperty('--w', W + 'px'); st.setProperty('--h', H + 'px');
+    st.setProperty('--x', lerp(x0, vw / 2, e) + 'px'); st.setProperty('--y', lerp(y0, vh / 2 - 3, e) + 'px');
+    st.setProperty('--s', s);
+    st.setProperty('--rx', lerp(RX, 0, e) + 'deg'); st.setProperty('--rz', lerp(RZ, 0, e) + 'deg');
+    st.setProperty('--step', lerp(58 * s0 / 7, 8 / 7, e) + 'px');
+    var fade = clamp(1 - e * 2.6, 0, 1);
+    bar.style.opacity = fade; bar.style.visibility = fade === 0 ? 'hidden' : 'visible'; copy.style.opacity = fade; copy.style.translate = '0 calc(-50% - ' + (e * 160) + 'px)';
+    copy.style.visibility = fade === 0 ? 'hidden' : 'visible';
+    placePawn();
+  }
+
+  function anchorPos(i) {
+    var r = anchors[i].getBoundingClientRect(), p = pin.getBoundingClientRect();
+    return { x: r.left - p.left, y: r.top - p.top };
+  }
+  function placePawn() {
+    var a = anchorPos(hop ? hop.from : here), x = a.x, y = a.y, lift = 0, sq = 1;
+    if (hop) {
+      var b = anchorPos(hop.to), t = hop.t;
+      x = lerp(a.x, b.x, t); y = lerp(a.y, b.y, t);
+      lift = Math.sin(Math.PI * t) * 96 * s;
+      sq = 1 + Math.sin(Math.PI * t) * .05;
+    }
+    if (dropT < 1) lift += (1 - dropT) * (1 - dropT) * 180;
+    var k = s * sq;
+    pawn.style.transform = 'translate(' + (x - 36) + 'px,' + (y - 124 - lift) + 'px) scale(' + k + ')';
+  }
+  function request() { if (!ticking) { ticking = true; requestAnimationFrame(draw); } }
+
+  function setMode() {
+    root.classList.toggle('pinned', mq.matches);
+    if (!mq.matches) { rig.removeAttribute('style'); copy.removeAttribute('style'); pawn.removeAttribute('style'); bar.removeAttribute('style'); }
+    draw();
+  }
+
+  function land(i) {
+    tiles.forEach(function (t, n) { t.classList.toggle('here', n === i); });
+    statusEl.textContent = 'Le pion s\'arrête sur « ' + tiles[i].dataset.name + ' ».';
+  }
+  function hopTo(left, done) {
+    if (!left) return done();
+    var from = here, to = (here + 1) % 8, start = performance.now();
+    tiles[from].classList.remove('here');
+    hop = { from: from, to: to, t: 0 };
+    (function step(now) {
+      hop.t = clamp((now - start) / 290, 0, 1);
+      placePawn();
+      if (hop.t < 1) return requestAnimationFrame(step);
+      here = to; hop = null; placePawn();
+      setTimeout(function () { hopTo(left - 1, done); }, 45);
+    })(start);
+  }
+  roll.addEventListener('click', function () {
+    if (roll.disabled) return;
+    roll.disabled = true;
+    var n = 1 + Math.floor(Math.random() * 6), c = 0;
+    statusEl.textContent = 'Le dé roule…';
+    die.classList.add('rolling');
+    var spin = setInterval(function () {
+      face(1 + (c++ % 6));
+      if (c < 8) return;
+      clearInterval(spin); face(n); die.classList.remove('rolling');
+      hopTo(n, function () { land(here); roll.disabled = false; });
+    }, 62);
+  });
+
+  function drop(now) {
+    if (!dropStart) dropStart = now;
+    dropT = clamp((now - dropStart - 250) / 520, 0, 1);
+    if (mq.matches) placePawn();
+    if (dropT < 1) requestAnimationFrame(drop);
+  }
+
+  face(5);
+  addEventListener('scroll', request, { passive: true });
+  addEventListener('resize', request);
+  mq.addEventListener('change', setMode);
+  setMode();
+  if (mq.matches) { requestAnimationFrame(drop); setTimeout(function () { dropT = 1; request(); }, 1100); } else dropT = 1;
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(request);
+})();
+</script>
+
 </body>
 </html>
