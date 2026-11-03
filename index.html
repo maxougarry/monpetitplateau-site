@@ -71,8 +71,12 @@ a { color: var(--violet-ink); text-underline-offset: 3px; }
 .brand { display: flex; align-items: center; gap: 12px; font: 800 26px/1 var(--display); color: var(--title); text-decoration: none; }
 .brand img { width: 56px; height: 56px; }
 .brand span { padding-top: 3px; }
-.soon { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px;
-  background: var(--violet); color: #fff; font: 700 19px/1.1 var(--display); }
+.soon, .get { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px; font: 700 19px/1.1 var(--display); }
+.get { background: var(--violet); color: #fff; text-decoration: none; box-shadow: 0 4px 0 #4A379C; transition: transform .12s, box-shadow .12s; }
+.get:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #4A379C; }
+.get:active { transform: translateY(3px); box-shadow: 0 1px 0 #4A379C; }
+.get svg { width: 15px; height: 17px; flex: none; }
+.soon { background: var(--board); color: var(--muted); }
 .stores { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
 /* ——— Accueil ——— */
@@ -185,7 +189,7 @@ footer { border-top: 1px solid var(--line); }
       <header class="topbar"><a class="brand" href="#stage" aria-label="Mon Petit Plateau"><img src="marque.svg" alt="" width="56" height="56"><span>Mon Petit Plateau</span></a></header>
       <h1><span>Ce soir,</span> <span>on joue</span> <span>à quoi&#8239;?</span></h1>
       <p class="lede">Scanne tes jeux de société, partage ta collection et prête tes boîtes aux amis.</p>
-      <div class="stores"><p class="soon">Bientôt sur Google Play</p><p class="soon">Bientôt sur l'App Store</p></div>
+      <div class="stores"><a class="get" href="https://play.google.com/store/apps/details?id=com.monpetitplateau.app"><svg viewBox="0 0 16 18" aria-hidden="true"><path fill="currentColor" d="M1 1.7C1 .6 2.2-.1 3.2.5l11.2 6.7c1 .6 1 2 0 2.6L3.2 17.5c-1 .6-2.2-.1-2.2-1.2z"/></svg>Télécharger sur Google Play</a><p class="soon">Bientôt sur l'App Store</p></div>
       <p class="free">Gratuit et sans publicité.</p>
     </div>
 
@@ -263,7 +267,7 @@ footer { border-top: 1px solid var(--line); }
   <h2>Pas de pub. Pas de revente de données.</h2>
   <div class="deal-txt">
     <p>Essaie sans créer de compte, puis garde tout en t'inscrivant. Si tu préfères rester discret, le profil privé ne montre que ta carte d'identité à ceux qui ne sont pas tes amis. Et tu peux supprimer ton compte à tout moment depuis ton profil.</p>
-    <div class="stores"><p class="soon">Bientôt sur Google Play</p><p class="soon">Bientôt sur l'App Store</p></div>
+    <div class="stores"><a class="get" href="https://play.google.com/store/apps/details?id=com.monpetitplateau.app"><svg viewBox="0 0 16 18" aria-hidden="true"><path fill="currentColor" d="M1 1.7C1 .6 2.2-.1 3.2.5l11.2 6.7c1 .6 1 2 0 2.6L3.2 17.5c-1 .6-2.2-.1-2.2-1.2z"/></svg>Télécharger sur Google Play</a><p class="soon">Bientôt sur l'App Store</p></div>
   </div>
 </section>
 
