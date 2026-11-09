@@ -1,16 +1,21 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.monpetitplateau.app",
       "sha256_cert_fingerprints": [
+        "8D:D8:B3:80:53:C8:5F:9B:57:64:81:99:C7:61:63:74:E1:26:E3:70:F5:25:6D:C6:1D:03:16:CD:03:B9:96:FC",
         "5B:22:D5:83:D2:53:84:9D:94:DA:12:CF:9C:E4:64:95:29:64:38:4A:31:3A:62:9F:B9:C0:F6:5F:BA:A2:21:77"
       ]
     }
   },
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.monpetitplateau.app.test",
