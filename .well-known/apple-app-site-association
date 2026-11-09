@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["MUZLWV54N8.com.monpetitplateau.app"],
+        "components": [{ "/": "/invite*" }]
+      },
+      {
+        "appIDs": ["MUZLWV54N8.com.monpetitplateau.app.test"],
+        "components": [{ "/": "/test/invite*" }]
+      }
+    ]
+  }
+}

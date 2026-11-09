@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon Petit Plateau · Invitation</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="On t'invite à partager vos jeux de société sur Mon Petit Plateau.">
+<meta name="theme-color" content="#FFFFFF">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mon Petit Plateau">
+<meta property="og:title" content="On t'invite sur Mon Petit Plateau">
+<meta property="og:description" content="Touche le lien pour m'ajouter en ami et voir mes jeux.">
+<meta property="og:image" content="https://monpetitplateau.app/icone-512.png">
+<link rel="icon" href="/icone-512.png">
+<link rel="preload" href="/polices/baloo-2.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: 'Baloo 2'; font-style: normal; font-weight: 600 800; font-display: swap; src: url('/polices/baloo-2.woff2') format('woff2'); }
+@font-face { font-family: 'Nunito Sans'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/polices/nunito-sans.woff2') format('woff2'); }
+:root {
+  --bg: #FFFFFF; --fg: #16171F; --muted: #5B5F6E; --board: #EEF0F6; --title: #23245C;
+  --violet: #6A4FE0; --violet-ink: #6A4FE0; --violet-edge: #4A379C;
+  --display: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --body: "Nunito Sans", "Avenir Next", "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1B1916; --fg: #F5F3EF; --muted: #ACA396; --board: #28251F; --title: #FFFFFF; --violet-ink: #A897FF; color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; min-height: 100svh; display: grid; place-items: center; background: var(--bg); color: var(--fg);
+       font: 400 17px/1.55 var(--body); }
+main { width: 100%; max-width: 440px; padding: 40px max(16px, env(safe-area-inset-left, 0px)) 48px; text-align: center;
+       display: grid; gap: 16px; justify-items: center; }
+h1, p { margin: 0; }
+a { color: var(--violet-ink); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--violet-ink); outline-offset: 3px; border-radius: 8px; }
+.logo { width: 112px; height: 112px; border-radius: 26px; }
+h1 { font: 800 clamp(32px, 9vw, 40px)/1.08 var(--display); color: var(--title); text-wrap: balance; }
+.lede { font-size: 18px; text-wrap: pretty; }
+.open { display: flex; width: 100%; justify-content: center; margin-top: 8px; padding: 16px 24px; border-radius: 999px;
+        background: var(--violet); color: #fff; text-decoration: none; font: 700 21px/1.1 var(--display);
+        box-shadow: 0 4px 0 var(--violet-edge); transition: transform .12s, box-shadow .12s; }
+.open:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--violet-edge); }
+.hr { width: 100%; display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 15px; margin-top: 12px; }
+.hr::before, .hr::after { content: ""; flex: 1; height: 1px; background: var(--board); }
+.stores { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.store, .soon { display: inline-flex; padding: 11px 20px; border-radius: 999px; font: 700 17px/1.1 var(--display); }
+.store { background: var(--board); color: var(--title); text-decoration: none; }
+.soon { background: var(--board); color: var(--muted); }
+.hint { color: var(--muted); font-size: 15px; text-wrap: pretty; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .open { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="/icone-512.png" alt="" width="112" height="112">
+  <div id="ok">
+    <h1>On t'invite sur Mon Petit Plateau</h1>
+    <p class="lede" style="margin-top:10px">Ouvre l'app pour accepter l'invitation : vous serez amis et vous verrez vos jeux.</p>
+  </div>
+  <a id="open" class="open" href="#">Ouvrir dans l'app</a>
+  <div id="bad" hidden>
+    <h1>Ce lien est incomplet</h1>
+    <p class="lede" style="margin-top:10px">Demande à qui te l'a envoyé de te le renvoyer.</p>
+  </div>
+  <p class="hr">Pas encore l'app ?</p>
+  <div class="stores">
+    <a class="store" href="https://play.google.com/store/apps/details?id=com.monpetitplateau.app">Google Play</a>
+    <span class="soon">Bientôt sur l'App Store</span>
+  </div>
+  <p class="hint">Une fois l'app installée, reviens toucher le lien qu'on t'a envoyé.</p>
+</main>
+<script>
+  // Lien web d'invitation (2026-11-09). Quand l'app est installée, Android et iOS ouvrent ce lien
+  // directement dans l'app. On arrive ici sinon, ou avec une version de l'app qui ne connaît pas
+  // encore ce lien : le bouton passe par le schéma de l'app, que toutes les versions comprennent.
+  (function () {
+    var APP = { scheme: 'monpetitplateau', pkg: 'com.monpetitplateau.app' };
+    var token = new URLSearchParams(location.search).get('token') || '';
+    var open = document.getElementById('open');
+    if (!/^[0-9a-f-]{36}$/i.test(token)) {
+      document.getElementById('ok').hidden = true;
+      open.hidden = true;
+      document.getElementById('bad').hidden = false;
+      return;
+    }
+    var path = 'invite?token=' + encodeURIComponent(token);
+    open.href = /Android/i.test(navigator.userAgent)
+      ? 'intent://' + path + '#Intent;scheme=' + APP.scheme + ';package=' + APP.pkg + ';end'
+      : APP.scheme + '://' + path;
+  })();
+</script>
+</body>
+</html>
